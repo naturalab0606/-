@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7f2e9" />
+  <title>PEACE NYANKO CLUB｜LINEミニアプリ モック</title>
+  <style>
+    :root {
+      --ink: #191713;
+      --muted: #746f67;
+      --paper: #f8f3e9;
+      --white: #fffdf8;
+      --orange: #ef5a24;
+      --orange-deep: #d94316;
+      --orange-soft: #ffe5d4;
+      --green: #1d7654;
+      --line: #ded6c9;
+      --shadow: 0 12px 32px rgba(49, 34, 20, .12);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: #d8d2c8; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 15%, rgba(239,90,36,.09) 0 3px, transparent 4px),
+        #ded8ce;
+      font-family: "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", system-ui, -apple-system, sans-serif;
+      min-height: 100svh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; color: inherit; }
+
+    .app-shell {
+      position: relative;
+      width: min(100%, 430px);
+      min-height: 100svh;
+      margin: 0 auto;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: 0 0 50px rgba(30, 22, 15, .18);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      height: 60px;
+      padding: env(safe-area-inset-top) 18px 0;
+      background: rgba(248, 243, 233, .93);
+      border-bottom: 1px solid rgba(88, 73, 57, .1);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand-mark { width: 33px; height: 33px; flex: 0 0 auto; }
+    .brand-copy { line-height: 1.05; }
+    .brand-name { font-size: 14px; font-weight: 900; letter-spacing: .08em; }
+    .brand-sub { margin-top: 4px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .1em; }
+
+    .icon-button {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      margin-left: auto;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+    }
+    .icon-button:active { background: #eae3d8; }
+    .icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .notice-dot { position: absolute; width: 7px; height: 7px; margin: -17px 0 0 13px; border: 2px solid var(--paper); border-radius: 50%; background: var(--orange); }
+
+    main { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+    .screen { display: none; animation: enter .28s ease both; }
+    .screen.active { display: block; }
+    @keyframes enter { from { opacity: 0; transform: translateY(5px); } }
+
+    .home-hero {
+      position: relative;
+      overflow: hidden;
+      padding: 22px 20px 24px;
+      color: #fff;
+      background: var(--orange);
+    }
+    .home-hero::after {
+      content: "";
+      position: absolute;
+      right: -42px;
+      bottom: -64px;
+      width: 170px;
+      height: 170px;
+      border: 38px solid rgba(255,255,255,.12);
+      border-radius: 50%;
+    }
+    .eyebrow { margin: 0 0 7px; font-size: 11px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .home-hero h1 { position: relative; z-index: 1; margin: 0; max-width: 310px; font-size: 25px; line-height: 1.45; letter-spacing: .01em; }
+    .home-hero h1 em { font-style: normal; color: #201a17; background: #fff4d8; padding: 0 .15em; }
+    .hero-summary { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+    .summary-cell { padding: 12px 14px; border: 1px solid rgba(255,255,255,.28); border-radius: 15px; background: rgba(84,27,7,.15); backdrop-filter: blur(4px); }
+    .summary-cell span { display: block; font-size: 10px; opacity: .83; }
+    .summary-cell strong { display: block; margin-top: 4px; font-size: 18px; letter-spacing: .03em; }
+
+    .content { padding: 20px 16px 0; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 4px 2px 12px; }
+    .section-head h2 { margin: 0; font-size: 17px; letter-spacing: .02em; }
+    .section-head button { border: 0; color: var(--orange-deep); background: transparent; font-size: 12px; font-weight: 800; cursor: pointer; }
+
+    .next-box {
+      position: relative;
+      overflow: hidden;
+      min-height: 208px;
+      border-radius: var(--radius);
+      background: #2b1c17;
+      box-shadow: var(--shadow);
+    }
+    .next-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .next-box::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(24,14,10,.92) 0%, rgba(24,14,10,.66) 46%, rgba(24,14,10,.03) 80%); }
+    .next-copy { position: relative; z-index: 1; width: 64%; padding: 20px; color: white; }
+    .tag { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px; border-radius: 99px; color: #37200f; background: #ffd5a9; font-size: 9px; font-weight: 900; letter-spacing: .07em; }
+    .next-copy h3 { margin: 12px 0 5px; font-size: 20px; line-height: 1.35; }
+    .next-copy p { margin: 0 0 15px; color: rgba(255,255,255,.74); font-size: 11px; line-height: 1.6; }
+
+    .small-cta, .primary-cta, .secondary-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 42px;
+      border: 0;
+      border-radius: 13px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .small-cta { padding: 0 13px; color: var(--ink); background: white; font-size: 11px; }
+    .primary-cta { width: 100%; padding: 0 18px; color: white; background: var(--orange); box-shadow: 0 8px 20px rgba(239,90,36,.2); }
+    .secondary-cta { width: 100%; padding: 0 18px; border: 1px solid var(--line); background: white; }
+    .small-cta:active, .primary-cta:active, .secondary-cta:active { transform: translateY(1px); opacity: .9; }
+
+    .quick-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+    .quick-item { min-width: 0; padding: 12px 3px 10px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); text-align: center; cursor: pointer; }
+    .quick-item .icon { width: 23px; height: 23px; color: var(--orange-deep); }
+    .quick-item span { display: block; margin-top: 7px; font-size: 10px; font-weight: 800; white-space: nowrap; }
+    .quick-item:active { background: var(--orange-soft); }
+
+    .impact-strip { display: grid; grid-template-columns: 1.2fr 1fr; overflow: hidden; margin-top: 18px; border: 1px solid #ddd0bb; border-radius: var(--radius); background: #fff9ef; }
+    .impact-copy { padding: 18px 14px; }
+    .impact-copy .eyebrow { color: var(--green); }
+    .impact-copy strong { display: block; font-size: 28px; line-height: 1; }
+    .impact-copy strong b { color: var(--orange); font-size: 34px; }
+    .impact-copy p { margin: 8px 0 0; color: var(--muted); font-size: 10px; line-height: 1.55; }
+    .impact-photo { position: relative; min-height: 138px; }
+    .impact-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .impact-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #fff9ef 0, transparent 35%); }
+
+    .event-tease { position: relative; overflow: hidden; margin-top: 18px; padding: 18px; border-radius: var(--radius); color: #fff; background: #191713; }
+    .event-tease::before { content: "NYANKO FEST"; position: absolute; right: -12px; bottom: -9px; color: rgba(255,255,255,.08); font-size: 32px; font-weight: 900; white-space: nowrap; transform: rotate(-5deg); }
+    .event-tease .date { display: inline-grid; place-items: center; float: left; width: 52px; height: 57px; margin-right: 13px; border-radius: 13px; color: var(--ink); background: #ffcf5d; font-size: 20px; font-weight: 900; line-height: .9; }
+    .event-tease .date small { font-size: 9px; letter-spacing: .1em; }
+    .event-tease h3 { margin: 1px 0 5px; font-size: 16px; }
+    .event-tease p { margin: 0; color: rgba(255,255,255,.65); font-size: 10px; }
+    .event-tease .arrow { position: absolute; top: 28px; right: 16px; }
+
+    .page-intro { padding: 22px 18px 14px; }
+    .page-intro .eyebrow { color: var(--orange-deep); }
+    .page-intro h1 { margin: 0; font-size: 25px; }
+    .page-intro p { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+
+    .member-card { position: relative; overflow: hidden; margin: 4px 16px 16px; padding: 21px; border-radius: 26px; color: white; background: #1c1916; box-shadow: 0 18px 38px rgba(27,20,16,.25); }
+    .member-card::after { content: ""; position: absolute; right: -55px; bottom: -70px; width: 210px; height: 210px; border: 34px solid rgba(239,90,36,.55); border-radius: 50%; }
+    .member-card-head { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: start; }
+    .member-card .mini-brand { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 900; letter-spacing: .12em; }
+    .member-card .mini-brand .brand-mark { width: 29px; height: 29px; }
+    .rank { padding: 5px 8px; border: 1px solid rgba(255,255,255,.3); border-radius: 99px; font-size: 9px; font-weight: 800; }
+    .member-name { position: relative; z-index: 1; margin-top: 28px; }
+    .member-name span { display: block; color: rgba(255,255,255,.55); font-size: 9px; letter-spacing: .12em; }
+    .member-name strong { display: block; margin-top: 4px; font-size: 21px; }
+    .member-meta { position: relative; z-index: 1; display: flex; justify-content: space-between; margin-top: 21px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; letter-spacing: .06em; }
+
+    .qr-card { margin: 0 16px; padding: 20px; border: 1px solid var(--line); border-radius: 24px; background: white; text-align: center; }
+    .qr-wrap { display: grid; place-items: center; width: 180px; height: 180px; margin: 0 auto 14px; padding: 11px; border-radius: 14px; background: white; box-shadow: inset 0 0 0 1px #eee; }
+    #qr { display: grid; grid-template-columns: repeat(21, 1fr); width: 158px; height: 158px; background: white; }
+    #qr i { background: transparent; }
+    #qr i.on { background: #171512; }
+    .qr-card h2 { margin: 0; font-size: 17px; }
+    .qr-card p { margin: 6px 0 15px; color: var(--muted); font-size: 11px; }
+    .member-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 12px 16px 0; }
+    .stat-box { padding: 15px; border: 1px solid var(--line); border-radius: 18px; background: var(--white); }
+    .stat-box span { display: block; color: var(--muted); font-size: 10px; }
+    .stat-box strong { display: block; margin-top: 5px; font-size: 19px; }
+
+    .subscription-card { overflow: hidden; margin: 4px 16px 14px; border: 1px solid var(--line); border-radius: 25px; background: white; box-shadow: var(--shadow); }
+    .sub-image { position: relative; height: 200px; background: #ffe9d7; }
+    .sub-image img { width: 100%; height: 100%; object-fit: cover; }
+    .sub-image .status { position: absolute; top: 14px; left: 14px; padding: 6px 9px; border-radius: 99px; color: white; background: var(--green); font-size: 10px; font-weight: 900; }
+    .sub-body { padding: 18px; }
+    .sub-body h2 { margin: 0; font-size: 20px; }
+    .price { margin: 5px 0 16px; color: var(--muted); font-size: 11px; }
+    .price strong { color: var(--ink); font-size: 20px; }
+    .detail-list { margin: 0 0 17px; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+    .detail-list li { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 11px; }
+    .detail-list span { color: var(--muted); }
+    .detail-list b { text-align: right; }
+    .shopify-note { display: flex; align-items: center; gap: 8px; margin-top: 11px; color: var(--muted); font-size: 9px; line-height: 1.45; }
+    .shopify-dot { display: grid; place-items: center; flex: 0 0 25px; height: 25px; border-radius: 8px; color: white; background: #96bf48; font-weight: 900; }
+
+    .timeline { margin: 0 16px; padding: 0; list-style: none; }
+    .timeline li { position: relative; display: grid; grid-template-columns: 42px 1fr; gap: 12px; padding: 0 0 18px; }
+    .timeline li:not(:last-child)::before { content: ""; position: absolute; top: 38px; left: 20px; bottom: -2px; width: 1px; background: var(--line); }
+    .timeline-icon { z-index: 1; display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--line); border-radius: 50%; color: var(--orange-deep); background: var(--paper); }
+    .timeline-copy { padding-top: 2px; }
+    .timeline-copy small { color: var(--orange-deep); font-size: 9px; font-weight: 900; letter-spacing: .08em; }
+    .timeline-copy h3 { margin: 3px 0; font-size: 14px; }
+    .timeline-copy p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+
+    .event-main { overflow: hidden; margin: 4px 16px 17px; border-radius: 25px; color: white; background: #1c1916; }
+    .event-visual { position: relative; display: grid; place-items: center; height: 170px; background: var(--orange); }
+    .event-visual::before, .event-visual::after { content: ""; position: absolute; width: 84px; height: 84px; border: 18px solid rgba(255,255,255,.16); border-radius: 50%; }
+    .event-visual::before { left: -20px; top: -30px; }
+    .event-visual::after { right: -20px; bottom: -30px; }
+    .festival-logo { position: relative; z-index: 1; text-align: center; transform: rotate(-2deg); }
+    .festival-logo small { font-size: 9px; font-weight: 900; letter-spacing: .22em; }
+    .festival-logo strong { display: block; margin-top: 4px; font-size: 28px; line-height: 1.05; }
+    .event-body { padding: 18px; }
+    .event-body h2 { margin: 0 0 6px; font-size: 19px; }
+    .event-body p { margin: 0 0 16px; color: rgba(255,255,255,.64); font-size: 11px; line-height: 1.65; }
+    .event-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .event-facts div { padding: 11px; border: 1px solid rgba(255,255,255,.15); border-radius: 14px; }
+    .event-facts span { display: block; color: rgba(255,255,255,.55); font-size: 9px; }
+    .event-facts b { display: block; margin-top: 3px; font-size: 12px; }
+
+    .profile-head { display: flex; align-items: center; gap: 13px; margin: 4px 16px 16px; padding: 17px; border-radius: 21px; color: white; background: var(--orange); }
+    .avatar { display: grid; place-items: center; width: 52px; height: 52px; border: 2px solid rgba(255,255,255,.7); border-radius: 50%; background: #fff4e9; }
+    .avatar .brand-mark { width: 38px; height: 38px; }
+    .profile-head h2 { margin: 0; font-size: 17px; }
+    .profile-head p { margin: 4px 0 0; font-size: 10px; opacity: .8; }
+    .profile-menu { overflow: hidden; margin: 0 16px 14px; border: 1px solid var(--line); border-radius: 21px; background: white; }
+    .menu-row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 0 15px; border: 0; border-bottom: 1px solid var(--line); background: white; text-align: left; cursor: pointer; }
+    .menu-row:last-child { border-bottom: 0; }
+    .menu-row .icon { width: 20px; color: var(--orange-deep); }
+    .menu-row span { font-size: 12px; font-weight: 800; }
+    .menu-row small { display: block; margin-top: 2px; color: var(--muted); font-size: 9px; font-weight: 400; }
+    .chev { margin-left: auto; color: #aaa; }
+    .line-badge { margin-left: auto; padding: 4px 7px; border-radius: 99px; color: #087d31; background: #dcf7e5; font-size: 8px; font-weight: 900; }
+    .toggle { position: relative; width: 40px; height: 24px; margin-left: auto; border: 0; border-radius: 99px; background: #cac6bf; cursor: pointer; transition: .2s; }
+    .toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; box-shadow: 0 1px 4px rgba(0,0,0,.2); transition: .2s; }
+    .toggle.on { background: #18b95b; }
+    .toggle.on::after { transform: translateX(16px); }
+
+    .bottom-nav { position: fixed; z-index: 30; right: 0; bottom: 0; left: 0; width: min(100%, 430px); height: calc(72px + env(safe-area-inset-bottom)); margin: auto; padding: 7px 7px env(safe-area-inset-bottom); border-top: 1px solid rgba(77,61,45,.12); background: rgba(255,253,248,.96); backdrop-filter: blur(18px); }
+    .bottom-nav-inner { display: grid; grid-template-columns: repeat(5, 1fr); height: 100%; }
+    .nav-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border: 0; color: #8a847c; background: transparent; font-size: 8px; font-weight: 800; cursor: pointer; }
+    .nav-btn .icon { width: 22px; height: 22px; }
+    .nav-btn.active { color: var(--orange-deep); }
+
+    .modal-backdrop { position: fixed; z-index: 100; inset: 0; display: none; align-items: end; justify-content: center; padding: 16px; background: rgba(18,14,11,.55); backdrop-filter: blur(3px); }
+    .modal-backdrop.open { display: flex; animation: fade .2s ease both; }
+    @keyframes fade { from { opacity: 0; } }
+    .modal { width: min(100%, 398px); padding: 19px; border-radius: 25px; background: var(--white); box-shadow: 0 20px 70px rgba(0,0,0,.32); animation: rise .28s ease both; }
+    @keyframes rise { from { transform: translateY(20px); } }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .modal h2 { margin: 0; font-size: 18px; }
+    .modal p { margin: 10px 0 17px; color: var(--muted); font-size: 11px; line-height: 1.7; }
+    .modal-close { display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 50%; background: #ede8df; cursor: pointer; }
+    .modal-actions { display: grid; gap: 8px; }
+
+    .toast { position: fixed; z-index: 120; bottom: 92px; left: 50%; width: max-content; max-width: calc(100% - 32px); padding: 11px 15px; border-radius: 99px; color: white; background: #1d1a17; font-size: 11px; font-weight: 800; box-shadow: 0 8px 25px rgba(0,0,0,.25); opacity: 0; pointer-events: none; transform: translate(-50%, 12px); transition: .25s ease; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    .prototype-note { margin: 18px 18px 0; color: #9b948b; font-size: 9px; line-height: 1.6; text-align: center; }
+    .spacer { height: 18px; }
+
+    @media (min-width: 700px) {
+      body { padding: 28px 0; }
+      .app-shell { min-height: 900px; border-radius: 30px; }
+      .bottom-nav { bottom: 28px; border-radius: 0 0 30px 30px; }
+      .modal-backdrop { align-items: center; }
+    }
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute">
+    <defs>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.5 12 3l8.5 7.5V21H15v-6H9v6H3.5Z"/></symbol>
+      <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M7 15h4"/></symbol>
+      <symbol id="i-box" viewBox="0 0 24 24"><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="m4 7 8 4 8-4v10l-8 4-8-4V7ZM12 11v10"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM9.7 21h4.6"/></symbol>
+      <symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="12" rx="1"/><path d="M12 9v12M3 13h18M12 9H7.5a2.5 2.5 0 1 1 2.5-2.5C10 8 12 9 12 9Zm0 0h4.5A2.5 2.5 0 1 0 14 6.5C14 8 12 9 12 9Z"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.7a5.5 5.5 0 0 0-7.8 0L12 5.8l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.4 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/></symbol>
+      <symbol id="i-qr" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM18 18h3v3h-3zM18 14h3M14 20h2"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+      <symbol id="i-truck" viewBox="0 0 24 24"><path d="M3 6h11v11H3zM14 10h4l3 3v4h-7z"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></symbol>
+      <symbol id="i-credit" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/></symbol>
+      <symbol id="i-line" viewBox="0 0 24 24"><path d="M21 11.5c0 4.7-4.3 8.5-9.5 8.5-.8 0-1.6-.1-2.3-.3L5 22l1.1-3.6A8.1 8.1 0 0 1 2 11.5C2 6.8 6.3 3 11.5 3S21 6.8 21 11.5Z"/></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4 10 14M18 13v7H4V6h7"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <path fill="#ef5a24" d="M8 18C8 9 15 4 24 4h16c9 0 16 5 16 14v30c0 8-5 12-13 12H21C13 60 8 56 8 48V18Z"/>
+          <path fill="#fff" d="M17 44V26l7-9 8 7 8-7 7 9v18c0 8-7 12-15 12s-15-4-15-12Z"/>
+          <path fill="#171512" d="M17 44V26l7-9 8 7v32c-8 0-15-4-15-12Z"/>
+          <circle cx="26" cy="35" r="2.4" fill="#fff"/><circle cx="39" cy="35" r="2.4" fill="#171512"/><path d="m29 42 3 2 3-2" fill="none" stroke="#ef5a24" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="brand-copy"><div class="brand-name">PEACE NYANKO CLUB</div><div class="brand-sub">飲むたび、命がつながる。</div></div>
+      </div>
+      <button class="icon-button" type="button" data-modal="notice" aria-label="お知らせ"><svg class="icon"><use href="#i-bell"/></svg><span class="notice-dot"></span></button>
+    </header>
+
+    <main>
+      <section id="home" class="screen active" aria-label="ホーム">
+        <div class="home-hero">
+          <p class="eyebrow">Good evening, Rumi</p>
+          <h1>今月も、ビール4本が<br><em>猫たちの未来</em>につながります。</h1>
+          <div class="hero-summary">
+            <div class="summary-cell"><span>次回のお届け</span><strong>10月20日</strong></div>
+            <div class="summary-cell"><span>今月の寄付予定</span><strong>200円</strong></div>
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="section-head"><h2>次回の定期便</h2><button data-route="subscription">詳しく見る →</button></div>
+          <article class="next-box">
+            <img src="assets/products.jpg" alt="ピースニャンコクラフトの白猫、黒猫ビールとみかんサイダー" />
+            <div class="next-copy">
+              <span class="tag">OCTOBER BOX</span>
+              <h3>秋の醸造所<br>セレクション</h3>
+              <p>全国の醸造所から、4種類をお届けします。</p>
+              <button class="small-cta" type="button" data-route="subscription">中身を見る <span>→</span></button>
+            </div>
+          </article>
+
+          <div class="section-head" style="margin-top:22px"><h2>会員メニュー</h2></div>
+          <div class="quick-grid">
+            <button class="quick-item" type="button" data-route="member"><svg class="icon"><use href="#i-card"/></svg><span>会員証</span></button>
+            <button class="quick-item" type="button" data-route="subscription"><svg class="icon"><use href="#i-box"/></svg><span>定期便</span></button>
+            <button class="quick-item" type="button" data-route="events"><svg class="icon"><use href="#i-calendar"/></svg><span>イベント</span></button>
+            <button class="quick-item" type="button" data-modal="coupon"><svg class="icon"><use href="#i-gift"/></svg><span>クーポン</span></button>
+          </div>
+
+          <article class="impact-strip">
+            <div class="impact-copy">
+              <p class="eyebrow">Your impact</p>
+              <strong>累計 <b>1,200</b>円</strong>
+              <p>あなたのお買い物から、保護猫活動へ寄付されました。</p>
+            </div>
+            <div class="impact-photo"><img src="assets/impact.jpg" alt="保護猫活動の様子" /></div>
+          </article>
+
+          <button class="event-tease" type="button" data-route="events" style="width:100%;border:0;text-align:left">
+            <span class="date">15<small>NOV</small></span>
+            <h3>ピースニャンコ ビアフェス</h3>
+            <p>会員先行受付中 · 東京・清澄白河</p>
+            <span class="arrow">→</span>
+          </button>
+          <p class="prototype-note">この画面はLINEミニアプリのコンセプトモックです。</p>
+        </div>
+      </section>
+
+      <section id="member" class="screen" aria-label="会員証">
+        <div class="page-intro"><p class="eyebrow">Membership</p><h1>会員証</h1><p>イベント受付や会員限定特典で、この画面を提示してください。</p></div>
+        <article class="member-card">
+          <div class="member-card-head">
+            <div class="mini-brand">
+              <svg class="brand-mark" viewBox="0 0 64 64"><path fill="#ef5a24" d="M8 18C8 9 15 4 24 4h16c9 0 16 5 16 14v30c0 8-5 12-13 12H21C13 60 8 56 8 48V18Z"/><path fill="#fff" d="M17 44V26l7-9 8 7 8-7 7 9v18c0 8-7 12-15 12s-15-4-15-12Z"/><path fill="#171512" d="M17 44V26l7-9 8 7v32c-8 0-15-4-15-12Z"/></svg>
+              PEACE NYANKO
+            </div>
+            <span class="rank">PAW MEMBER</span>
+          </div>
+          <div class="member-name"><span>MEMBER NAME</span><strong>江蔵 瑠美</strong></div>
+          <div class="member-meta"><span>PNC-002851</span><span>MEMBER SINCE 2026</span></div>
+        </article>
+        <div class="qr-card">
+          <div class="qr-wrap"><div id="qr" aria-label="会員用QRコード"></div></div>
+          <h2>受付でスキャン</h2>
+          <p>ビアフェス・提携店でのチェックインに使えます</p>
+          <button class="primary-cta" type="button" data-modal="checkin"><svg class="icon" style="width:19px"><use href="#i-qr"/></svg> チェックインする</button>
+        </div>
+        <div class="member-stats">
+          <div class="stat-box"><span>イベント参加</span><strong>2回</strong></div>
+          <div class="stat-box"><span>会員継続</span><strong>6か月</strong></div>
+        </div>
+        <div class="spacer"></div>
+      </section>
+
+      <section id="subscription" class="screen" aria-label="定期便">
+        <div class="page-intro"><p class="eyebrow">Subscription</p><h1>定期便</h1><p>申込み・決済・配送先の管理はShopifyに集約。LINEから迷わずアクセスできます。</p></div>
+        <article class="subscription-card">
+          <div class="sub-image"><img src="assets/products.jpg" alt="ピースニャンコクラフトの商品"/><span class="status">契約中</span></div>
+          <div class="sub-body">
+            <h2>毎月4種 おまかせ便</h2>
+            <p class="price"><strong>4,980円</strong> / 月 · 送料・寄付金込み</p>
+            <ul class="detail-list">
+              <li><span>次回決済日</span><b>2026年10月12日</b></li>
+              <li><span>お届け予定</span><b>10月20日〜22日</b></li>
+              <li><span>今月の寄付</span><b>200円</b></li>
+            </ul>
+            <button class="primary-cta" type="button" data-modal="shopify">配送・決済を管理 <svg class="icon" style="width:17px"><use href="#i-external"/></svg></button>
+            <div class="shopify-note"><span class="shopify-dot">S</span><span>安全なShopify会員ページに移動して変更します。LINE連携は維持されます。</span></div>
+          </div>
+        </article>
+        <div class="section-head" style="margin:22px 18px 14px"><h2>お届けまで</h2></div>
+        <ol class="timeline">
+          <li><span class="timeline-icon"><svg class="icon"><use href="#i-credit"/></svg></span><div class="timeline-copy"><small>10/12</small><h3>次回決済</h3><p>登録済みの決済方法で4,980円をお支払い。</p></div></li>
+          <li><span class="timeline-icon"><svg class="icon"><use href="#i-box"/></svg></span><div class="timeline-copy"><small>10/17</small><h3>今月の4本をお知らせ</h3><p>LINEで醸造所と味わいのストーリーをお届け。</p></div></li>
+          <li><span class="timeline-icon"><svg class="icon"><use href="#i-truck"/></svg></span><div class="timeline-copy"><small>10/20–22</small><h3>ご自宅へお届け</h3><p>発送時にLINEへ追跡リンクを通知します。</p></div></li>
+        </ol>
+      </section>
+
+      <section id="events" class="screen" aria-label="イベント">
+        <div class="page-intro"><p class="eyebrow">Events</p><h1>イベント</h1><p>オンラインだけでは終わらない、猫好きと醸造所がつながる場所。</p></div>
+        <article class="event-main">
+          <div class="event-visual"><div class="festival-logo"><small>DRINK &amp; SAVE CATS</small><strong>ピースニャンコ<br>ビアフェス</strong></div></div>
+          <div class="event-body">
+            <h2>第1回 ビアフェス 2026</h2>
+            <p>全国のコラボ醸造所が集合。会員限定テイスティングと保護猫活動のトークセッションも。</p>
+            <div class="event-facts"><div><span>DATE</span><b>11月15日（日）</b></div><div><span>PLACE</span><b>東京・清澄白河</b></div></div>
+            <button class="primary-cta" type="button" data-modal="event">会員先行で申し込む</button>
+          </div>
+        </article>
+        <div class="section-head" style="margin:0 18px 12px"><h2>参加予定</h2></div>
+        <div class="profile-menu">
+          <button class="menu-row" type="button" data-modal="event"><svg class="icon"><use href="#i-calendar"/></svg><span>オンライン醸造所ツアー<small>10月24日（土）19:00</small></span><span class="line-badge">予約済み</span></button>
+          <button class="menu-row" type="button" data-modal="checkin"><svg class="icon"><use href="#i-pin"/></svg><span>猫の譲渡会 × 試飲会<small>11月1日（日）13:00</small></span><span class="chev">›</span></button>
+        </div>
+      </section>
+
+      <section id="profile" class="screen" aria-label="マイページ">
+        <div class="page-intro"><p class="eyebrow">My page</p><h1>マイページ</h1></div>
+        <div class="profile-head">
+          <div class="avatar"><svg class="brand-mark" viewBox="0 0 64 64"><path fill="#ef5a24" d="M8 18C8 9 15 4 24 4h16c9 0 16 5 16 14v30c0 8-5 12-13 12H21C13 60 8 56 8 48V18Z"/><path fill="#fff" d="M17 44V26l7-9 8 7 8-7 7 9v18c0 8-7 12-15 12s-15-4-15-12Z"/><path fill="#171512" d="M17 44V26l7-9 8 7v32c-8 0-15-4-15-12Z"/></svg></div>
+          <div><h2>江蔵 瑠美 さん</h2><p>会員番号 PNC-002851</p></div>
+        </div>
+        <div class="profile-menu">
+          <button class="menu-row" type="button" data-modal="line"><svg class="icon"><use href="#i-line"/></svg><span>LINEアカウント連携<small>発送・イベント情報を受け取ります</small></span><span class="line-badge">連携済み</span></button>
+          <button class="menu-row" type="button"><svg class="icon"><use href="#i-bell"/></svg><span>お届け通知</span><i class="toggle on" role="switch" aria-checked="true"></i></button>
+          <button class="menu-row" type="button"><svg class="icon"><use href="#i-heart"/></svg><span>寄付レポート</span><span class="chev">›</span></button>
+        </div>
+        <div class="profile-menu">
+          <button class="menu-row" type="button" data-modal="shopify"><svg class="icon"><use href="#i-truck"/></svg><span>配送先・お支払い方法<small>Shopifyで安全に管理</small></span><span class="chev">›</span></button>
+          <button class="menu-row" type="button" data-modal="shopify"><svg class="icon"><use href="#i-box"/></svg><span>購入履歴</span><span class="chev">›</span></button>
+          <button class="menu-row" type="button" data-modal="support"><svg class="icon"><use href="#i-user"/></svg><span>お問い合わせ</span><span class="chev">›</span></button>
+        </div>
+        <p class="prototype-note">会員情報・決済情報はShopifyと連携し、LINE側には必要最小限のみ表示する想定です。</p>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="メインメニュー">
+      <div class="bottom-nav-inner">
+        <button class="nav-btn active" type="button" data-route="home"><svg class="icon"><use href="#i-home"/></svg><span>ホーム</span></button>
+        <button class="nav-btn" type="button" data-route="member"><svg class="icon"><use href="#i-card"/></svg><span>会員証</span></button>
+        <button class="nav-btn" type="button" data-route="subscription"><svg class="icon"><use href="#i-box"/></svg><span>定期便</span></button>
+        <button class="nav-btn" type="button" data-route="events"><svg class="icon"><use href="#i-calendar"/></svg><span>イベント</span></button>
+        <button class="nav-btn" type="button" data-route="profile"><svg class="icon"><use href="#i-user"/></svg><span>マイページ</span></button>
+      </div>
+    </nav>
+  </div>
+
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head"><h2 id="modalTitle">タイトル</h2><button class="modal-close" type="button" aria-label="閉じる">×</button></div>
+      <p id="modalText"></p>
+      <div id="modalActions" class="modal-actions"></div>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const screens = [...document.querySelectorAll('.screen')];
+    const navButtons = [...document.querySelectorAll('.nav-btn')];
+
+    function goTo(route) {
+      screens.forEach(screen => screen.classList.toggle('active', screen.id === route));
+      navButtons.forEach(button => button.classList.toggle('active', button.dataset.route === route));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('[data-route]').forEach(el => el.addEventListener('click', () => goTo(el.dataset.route)));
+
+    const previewScreen = new URLSearchParams(location.search).get('screen');
+    if (screens.some(screen => screen.id === previewScreen)) goTo(previewScreen);
+
+    const modalData = {
+      notice: ['お知らせ', '10月の定期便は10月12日に決済予定です。お届け先の変更は10月10日までにShopify会員ページでお願いします。', '確認しました'],
+      coupon: ['会員限定クーポン', 'ビアフェス会場で使える「テイスティング1杯無料」クーポンです。会員証と一緒に受付でご提示ください。', 'クーポンを保存'],
+      checkin: ['チェックイン', '店舗またはイベント会場に掲示されたQRコードを読み取ると、来場履歴と会員特典が記録されます。', 'デモチェックイン'],
+      shopify: ['Shopifyへ移動します', '配送先、決済方法、定期便のスキップ・解約は、安全なShopify会員ページで管理します。', 'Shopifyを開く'],
+      event: ['イベント参加登録', '会員情報を使って先行枠へ申し込みます。参加確定後、LINEへデジタルチケットをお送りします。', 'この内容で申し込む'],
+      line: ['LINE連携済み', '発送通知、決済のお知らせ、イベントチケットをこのLINEアカウントで受け取れます。', 'OK'],
+      support: ['お問い合わせ', 'LINEトーク画面に戻り、スタッフへ直接メッセージを送れます。', 'LINEで問い合わせる']
+    };
+
+    const backdrop = document.getElementById('modalBackdrop');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalText = document.getElementById('modalText');
+    const modalActions = document.getElementById('modalActions');
+
+    function openModal(key) {
+      const [title, text, action] = modalData[key];
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modalActions.innerHTML = `<button class="primary-cta" type="button" data-confirm="${key}">${action}</button><button class="secondary-cta" type="button" data-cancel>キャンセル</button>`;
+      backdrop.classList.add('open');
+      backdrop.setAttribute('aria-hidden', 'false');
+      modalActions.querySelector('[data-confirm]').addEventListener('click', () => confirmModal(key));
+      modalActions.querySelector('[data-cancel]').addEventListener('click', closeModal);
+    }
+
+    function closeModal() {
+      backdrop.classList.remove('open');
+      backdrop.setAttribute('aria-hidden', 'true');
+    }
+
+    function confirmModal(key) {
+      closeModal();
+      const messages = {
+        notice: 'お知らせを確認済みにしました', coupon: 'クーポンを保存しました', checkin: 'チェックインしました！',
+        shopify: 'モックのため外部ページへは移動しません', event: '先行参加を受け付けました', line: 'LINE連携を確認しました', support: 'LINEトークへの遷移イメージです'
+      };
+      showToast(messages[key]);
+    }
+
+    document.querySelectorAll('[data-modal]').forEach(el => el.addEventListener('click', () => openModal(el.dataset.modal)));
+    document.querySelector('.modal-close').addEventListener('click', closeModal);
+    backdrop.addEventListener('click', event => { if (event.target === backdrop) closeModal(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') closeModal(); });
+
+    document.querySelectorAll('.toggle').forEach(toggle => toggle.parentElement.addEventListener('click', event => {
+      event.preventDefault();
+      toggle.classList.toggle('on');
+      toggle.setAttribute('aria-checked', String(toggle.classList.contains('on')));
+      showToast(toggle.classList.contains('on') ? 'お届け通知をオンにしました' : 'お届け通知をオフにしました');
+    }));
+
+    let toastTimer;
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    // Deterministic QR-style member code for the visual prototype.
+    const qr = document.getElementById('qr');
+    const size = 21;
+    const finder = (x, y, ox, oy) => x >= ox && x < ox + 7 && y >= oy && y < oy + 7 && (x === ox || x === ox + 6 || y === oy || y === oy + 6 || (x >= ox + 2 && x <= ox + 4 && y >= oy + 2 && y <= oy + 4));
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const cell = document.createElement('i');
+        const isFinder = finder(x,y,0,0) || finder(x,y,14,0) || finder(x,y,0,14);
+        const isData = ((x * 7 + y * 11 + x * y) % 5 < 2) && !((x < 8 && y < 8) || (x > 12 && y < 8) || (x < 8 && y > 12));
+        if (isFinder || isData) cell.className = 'on';
+        qr.appendChild(cell);
+      }
+    }
+  </script>
+</body>
+</html>
